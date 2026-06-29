@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>R. Ambrish — AI & Robotics Researcher</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#1a1a1a;
+  --bg2:#1e1e1e;
+  --bg3:#222222;
+  --card:#252525;
+  --g:#76b900;
+  --gb:#5a8f00;
+  --gn:#39ff14;
+  --gl:rgba(118,185,0,0.15);
+  --w:#ffffff;
+  --w2:#e8e8e8;
+  --m:#a0a0a0;
+  --md:#6a6a6a;
+  --border:rgba(118,185,0,0.2);
+  --border2:rgba(255,255,255,0.08);
+  --font:'Inter',sans-serif;
+  --mono:'Space Mono',monospace;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--w);font-family:var(--font);font-size:16px;line-height:1.6;overflow-x:hidden;}
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-track{background:#111;}
+::-webkit-scrollbar-thumb{background:var(--g);border-radius:2px;}
+
+/* CANVAS BG */
+#bg-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(26,26,26,0.95);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;padding:0 5vw;height:60px;}
+.nav-logo{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--w);letter-spacing:1px;text-decoration:none;display:flex;align-items:center;gap:8px;}
+.nav-logo span{color:var(--g);}
+.nav-links{display:flex;gap:36px;list-style:none;}
+.nav-links a{color:var(--m);font-size:13px;text-decoration:none;font-weight:500;transition:color 0.2s;}
+.nav-links a:hover{color:var(--w);}
+.nav-cta{font-size:13px;padding:8px 22px;background:var(--g);color:#000;font-weight:700;text-decoration:none;transition:background 0.2s;letter-spacing:0.3px;}
+.nav-cta:hover{background:#8dd000;}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;align-items:center;padding:80px 8vw 60px;position:relative;z-index:1;overflow:hidden;}
+.hero-left{flex:1;max-width:600px;}
+.hero-right{flex:1;display:flex;justify-content:center;align-items:center;}
+.hero-eyebrow{font-size:12px;font-weight:700;color:var(--g);letter-spacing:2px;text-transform:uppercase;margin-bottom:18px;}
+.hero h1{font-size:clamp(36px,5.5vw,72px);font-weight:800;line-height:1.05;letter-spacing:-1.5px;margin-bottom:22px;color:var(--w);}
+.hero h1 .green{color:var(--g);}
+.hero-desc{font-size:clamp(15px,1.5vw,18px);color:var(--m);margin-bottom:36px;line-height:1.7;max-width:520px;font-weight:400;}
+.hero-desc em{color:var(--w);font-style:normal;font-weight:500;}
+.hero-cta-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:48px;}
+.btn-solid{padding:12px 28px;background:var(--g);color:#000;font-size:13px;font-weight:700;text-decoration:none;display:inline-block;transition:background 0.2s;letter-spacing:0.3px;}
+.btn-solid:hover{background:#8dd000;}
+.btn-outline{padding:11px 26px;background:transparent;border:1px solid rgba(255,255,255,0.3);color:var(--w);font-size:13px;font-weight:500;text-decoration:none;display:inline-block;transition:all 0.2s;letter-spacing:0.3px;}
+.btn-outline:hover{border-color:var(--w);}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;}
+.htag{font-size:11px;padding:5px 12px;border:1px solid rgba(255,255,255,0.1);color:var(--m);letter-spacing:0.5px;font-weight:500;background:rgba(255,255,255,0.03);}
+.htag.active{border-color:var(--g);color:var(--g);background:rgba(118,185,0,0.08);}
+
+/* ISO ROBOT CANVAS */
+#robot-canvas{width:100%;max-width:520px;height:420px;}
+
+/* STRIP */
+.strip{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--border2);border-bottom:1px solid var(--border2);background:rgba(0,0,0,0.2);position:relative;z-index:1;}
+.si{padding:28px 20px;border-right:1px solid var(--border2);text-align:center;}
+.si:last-child{border-right:none;}
+.si-num{font-family:var(--mono);font-size:24px;font-weight:700;color:var(--g);display:block;line-height:1;margin-bottom:6px;}
+.si-label{font-size:10px;color:var(--md);letter-spacing:1.5px;text-transform:uppercase;font-weight:600;}
+
+/* SECTIONS */
+section{padding:90px 8vw;position:relative;z-index:1;}
+.sec-eyebrow{font-size:11px;font-weight:700;color:var(--g);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;}
+.sec-title{font-size:clamp(28px,3.5vw,46px);font-weight:800;color:var(--w);margin-bottom:12px;line-height:1.1;letter-spacing:-0.5px;}
+.sec-sub{font-size:15px;color:var(--m);max-width:480px;margin-bottom:56px;line-height:1.7;}
+
+/* ABOUT */
+.about-sec{background:var(--bg2);}
+.about-grid{display:grid;grid-template-columns:1.2fr 0.8fr;gap:72px;align-items:start;}
+.about-body{font-size:15px;color:var(--m);line-height:1.85;}
+.about-body p{margin-bottom:18px;}
+.about-body strong{color:var(--w);font-weight:600;}
+.about-body .hl{color:var(--g);font-weight:600;}
+.quote-bar{margin-top:28px;padding:18px 22px;border-left:3px solid var(--g);background:rgba(118,185,0,0.06);}
+.quote-bar p{color:var(--m);font-size:14px;line-height:1.75;margin:0;font-style:italic;}
+.about-right{display:flex;flex-direction:column;gap:12px;}
+.acard{background:var(--bg3);border:1px solid var(--border2);padding:20px 22px;transition:border-color 0.2s;}
+.acard:hover{border-color:rgba(118,185,0,0.35);}
+.acard-tag{font-size:9px;font-weight:700;color:var(--g);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;}
+.acard-title{font-size:14px;font-weight:700;color:var(--w);margin-bottom:5px;}
+.acard-desc{font-size:12px;color:var(--m);line-height:1.6;}
+
+/* SKILLS */
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;}
+.sk{background:var(--card);border:1px solid var(--border2);padding:20px 18px;transition:border-color 0.2s,background 0.2s;position:relative;overflow:hidden;}
+.sk::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--g);transform:scaleX(0);transform-origin:left;transition:transform 0.3s;}
+.sk:hover{border-color:rgba(118,185,0,0.35);background:rgba(118,185,0,0.03);}
+.sk:hover::before{transform:scaleX(1);}
+.sk-sym{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--g);margin-bottom:12px;}
+.sk-name{font-size:13px;font-weight:700;color:var(--w);margin-bottom:4px;}
+.sk-cat{font-size:10px;color:var(--md);letter-spacing:0.5px;margin-bottom:12px;font-weight:500;}
+.sk-bar{height:2px;background:rgba(255,255,255,0.06);}
+.sk-fill{height:100%;background:var(--g);}
+
+/* PROJECTS */
+.proj-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;}
+.pc{background:var(--card);border:1px solid var(--border2);padding:28px;transition:border-color 0.2s;position:relative;}
+.pc:hover{border-color:rgba(118,185,0,0.3);}
+.pc-badge{position:absolute;top:18px;right:18px;font-size:9px;padding:3px 10px;background:var(--g);color:#000;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+.pc-num{font-family:var(--mono);font-size:10px;color:var(--md);margin-bottom:14px;letter-spacing:1px;}
+.pc-title{font-size:18px;font-weight:800;color:var(--w);margin-bottom:5px;letter-spacing:-0.3px;}
+.pc-sub{font-size:10px;font-weight:700;color:var(--g);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px;}
+.pc-desc{font-size:13px;color:var(--m);line-height:1.75;margin-bottom:18px;}
+.pc-domain-title{font-size:9px;font-weight:700;color:var(--md);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;}
+.domain-list{display:flex;flex-direction:column;gap:4px;margin-bottom:20px;}
+.dom-item{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--m);}
+.dom-dot{width:5px;height:5px;background:var(--g);flex-shrink:0;}
+.pc-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px;}
+.ptag{font-size:10px;padding:3px 10px;border:1px solid var(--border2);color:var(--md);letter-spacing:0.5px;font-weight:500;}
+.pc-link{font-size:11px;font-weight:700;color:var(--g);text-decoration:none;letter-spacing:1px;text-transform:uppercase;display:inline-flex;align-items:center;gap:6px;}
+.pc-link:hover{color:#8dd000;}
+
+/* CONTACT */
+.contact-sec{background:var(--bg2);}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:520px;margin-bottom:32px;}
+.cc{background:var(--bg3);border:1px solid var(--border2);padding:18px 20px;text-decoration:none;display:block;transition:border-color 0.2s;}
+.cc:hover{border-color:rgba(118,185,0,0.35);}
+.cc-icon{font-family:var(--mono);font-size:14px;color:var(--g);font-weight:700;margin-bottom:10px;}
+.cc-label{font-size:9px;font-weight:700;color:var(--md);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:3px;}
+.cc-value{font-size:13px;color:var(--w);font-weight:500;}
+.avail{display:inline-flex;align-items:center;gap:10px;padding:12px 20px;border:1px solid rgba(118,185,0,0.3);background:rgba(118,185,0,0.06);font-size:12px;color:var(--g);font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+.dot-live{width:7px;height:7px;background:var(--g);border-radius:50%;animation:blink 1.5s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.2;}}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border2);padding:24px 8vw;display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--md);flex-wrap:wrap;gap:10px;position:relative;z-index:1;}
+.foot-r{color:var(--g);font-weight:700;letter-spacing:0.5px;}
+
+@media(max-width:900px){
+  .hero{flex-direction:column;padding:100px 5vw 60px;}
+  #robot-canvas{height:280px;}
+  .about-grid{grid-template-columns:1fr;gap:36px;}
+  .strip{grid-template-columns:1fr 1fr;}
+  .contact-grid{grid-template-columns:1fr;}
+  .nav-links{display:none;}
+  section{padding:64px 5vw;}
+}
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<nav>
+  <a class="nav-logo" href="#hero">R.<span>AMBRISH</span></a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="mailto:ambrishwa05@gmail.com" class="nav-cta">Hire Me</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">AI & Robotics Researcher</div>
+    <h1>Building the<br><span class="green">Intelligent<br>Machine Age.</span></h1>
+    <p class="hero-desc">
+      Researcher and developer at the intersection of <em>deep learning, computer vision, and autonomous systems</em>. Every project is a step toward building real-world AI that operates at <em>NVIDIA scale</em>.
+    </p>
+    <div class="hero-cta-row">
+      <a href="#projects" class="btn-solid">View Projects</a>
+      <a href="mailto:ambrishwa05@gmail.com" class="btn-outline">Contact Me</a>
+    </div>
+    <div class="hero-tags">
+      <span class="htag active">Computer Vision</span>
+      <span class="htag active">Deep Learning</span>
+      <span class="htag active">Reinforcement Learning</span>
+      <span class="htag active">ROS / Robotics</span>
+      <span class="htag">Python</span>
+      <span class="htag">Maths in ML</span>
+      <span class="htag">SolidWorks</span>
+      <span class="htag">Research & Dev</span>
+    </div>
+  </div>
+  <div class="hero-right">
+    <canvas id="robot-canvas"></canvas>
+  </div>
+</section>
+
+<!-- STRIP -->
+<div class="strip">
+  <div class="si"><span class="si-num">3</span><span class="si-label">Core Projects</span></div>
+  <div class="si"><span class="si-num">10+</span><span class="si-label">Technical Skills</span></div>
+  <div class="si"><span class="si-num">NVDA</span><span class="si-label">Target: NVIDIA</span></div>
+  <div class="si"><span class="si-num">∞</span><span class="si-label">Research Drive</span></div>
+</div>
+
+<!-- ABOUT -->
+<section id="about" class="about-sec">
+  <div class="sec-eyebrow">About</div>
+  <h2 class="sec-title">Researcher. Builder.<br>Obsessed with AI.</h2>
+  <div class="about-grid">
+    <div>
+      <div class="about-body">
+        <p>I'm <strong>R. Ambrish</strong>, an AI and Robotics researcher building systems that perceive, decide, and act in the physical world. My work spans the full stack — from <span class="hl">mathematical foundations</span> and deep network architectures to robot hardware and autonomous navigation.</p>
+        <p>I don't just study AI — I <strong>build with it</strong>. Every project I take on is a step toward working at the frontier of AI and hardware research, where intelligence meets the physical world at scale.</p>
+        <p>Mentored by <strong>Melwin</strong>, founder of Alphabetics Labs — on a focused sprint to prove technical depth at a high-impact startup, with a direct path to an <span class="hl">NVIDIA recommendation</span>.</p>
+        <div class="quote-bar">
+          <p>"The goal isn't just to understand AI — it's to build systems that didn't exist before."</p>
+        </div>
+      </div>
+    </div>
+    <div class="about-right">
+      <div class="acard">
+        <div class="acard-tag">Current Sprint</div>
+        <div class="acard-title">High-Impact Internships</div>
+        <div class="acard-desc">Targeting frontier AI & robotics startups — real shipped systems, not résumé filler.</div>
+      </div>
+      <div class="acard">
+        <div class="acard-tag">Mentorship</div>
+        <div class="acard-title">Alphabetics Labs × Melwin</div>
+        <div class="acard-desc">Guided by Melwin — podcast host, startup founder, and career strategist at the frontier.</div>
+      </div>
+      <div class="acard">
+        <div class="acard-tag">3-Month Milestone</div>
+        <div class="acard-title">Prove → NVIDIA Recommendation</div>
+        <div class="acard-desc">Strong performance at a high-level startup unlocks a direct recommendation to NVIDIA research teams.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="sec-eyebrow">Skills</div>
+  <h2 class="sec-title">Technical Stack</h2>
+  <p class="sec-sub">Built for the frontier of AI research and autonomous systems engineering.</p>
+  <div class="skills-grid">
+    <div class="sk"><div class="sk-sym">Py</div><div class="sk-name">Python</div><div class="sk-cat">Core Language</div><div class="sk-bar"><div class="sk-fill" style="width:92%"></div></div></div>
+    <div class="sk"><div class="sk-sym">AI</div><div class="sk-name">AI / ML</div><div class="sk-cat">Applied Research</div><div class="sk-bar"><div class="sk-fill" style="width:85%"></div></div></div>
+    <div class="sk"><div class="sk-sym">DL</div><div class="sk-name">Deep Learning</div><div class="sk-cat">Neural Architectures</div><div class="sk-bar"><div class="sk-fill" style="width:80%"></div></div></div>
+    <div class="sk"><div class="sk-sym">∑</div><div class="sk-name">Maths in ML</div><div class="sk-cat">Theoretical Foundation</div><div class="sk-bar"><div class="sk-fill" style="width:83%"></div></div></div>
+    <div class="sk"><div class="sk-sym">CV</div><div class="sk-name">Computer Vision</div><div class="sk-cat">Perception Systems</div><div class="sk-bar"><div class="sk-fill" style="width:78%"></div></div></div>
+    <div class="sk"><div class="sk-sym">RL</div><div class="sk-name">Reinforcement Learning</div><div class="sk-cat">Decision & Control</div><div class="sk-bar"><div class="sk-fill" style="width:73%"></div></div></div>
+    <div class="sk"><div class="sk-sym">ROS</div><div class="sk-name">ROS / Robotics</div><div class="sk-cat">Autonomous Systems</div><div class="sk-bar"><div class="sk-fill" style="width:76%"></div></div></div>
+    <div class="sk"><div class="sk-sym">R&D</div><div class="sk-name">Research & Dev</div><div class="sk-cat">Experimental Systems</div><div class="sk-bar"><div class="sk-fill" style="width:88%"></div></div></div>
+    <div class="sk"><div class="sk-sym">Ds</div><div class="sk-name">Design / CAD</div><div class="sk-cat">SolidWorks & TinkerCAD</div><div class="sk-bar"><div class="sk-fill" style="width:70%"></div></div></div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects" style="background:var(--bg2);">
+  <div class="sec-eyebrow">Research & Projects</div>
+  <h2 class="sec-title">What I've Built</h2>
+  <p class="sec-sub">Three systems spanning conversational AI, autonomous navigation, and robotic hardware design.</p>
+  <div class="proj-grid">
+    <div class="pc">
+      <div class="pc-badge">Featured</div>
+      <div class="pc-num">PROJECT 01</div>
+      <div class="pc-title">SPOT-X</div>
+      <div class="pc-sub">Robot-Human Conversational AI</div>
+      <div class="pc-desc">A conversational AI interface for quadruped robots built on DialoGPT and deployed via Gradio. SPOT-X responds with a mission-focused robotic persona — enabling natural language interaction between humans and autonomous robots in real-time.</div>
+      <div class="pc-domain-title">Impact Domains</div>
+      <div class="domain-list">
+        <div class="dom-item"><div class="dom-dot"></div>Factory automation & human-robot teaming</div>
+        <div class="dom-item"><div class="dom-dot"></div>Hospital & healthcare autonomous assistants</div>
+        <div class="dom-item"><div class="dom-dot"></div>Industrial robotics & warehouse logistics</div>
+        <div class="dom-item"><div class="dom-dot"></div>Pharma & lab automation interfaces</div>
+        <div class="dom-item"><div class="dom-dot"></div>Defense & hazardous environment robots</div>
+      </div>
+      <div class="pc-tags">
+        <span class="ptag">Python</span><span class="ptag">HuggingFace</span><span class="ptag">DialoGPT</span><span class="ptag">Gradio</span><span class="ptag">NLP</span><span class="ptag">Transformers</span>
+      </div>
+      <a href="#" class="pc-link">View Project →</a>
+    </div>
+    <div class="pc">
+      <div class="pc-num">PROJECT 02</div>
+      <div class="pc-title">PatrolBot</div>
+      <div class="pc-sub">Autonomous Waypoint Navigation</div>
+      <div class="pc-desc">A fully autonomous robot navigation system built from scratch in Python using OOP. PatrolBot follows predefined waypoints, detects and responds to obstacles with real-time path replanning, and logs every movement with precise timestamps — deployment-ready for real autonomous environments.</div>
+      <div class="pc-domain-title">Impact Domains</div>
+      <div class="domain-list">
+        <div class="dom-item"><div class="dom-dot"></div>Factory floor inspection & patrol automation</div>
+        <div class="dom-item"><div class="dom-dot"></div>Hospital corridor delivery & logistics</div>
+        <div class="dom-item"><div class="dom-dot"></div>Warehouse & supply chain robotics</div>
+        <div class="dom-item"><div class="dom-dot"></div>Pharma GMP compliance patrol logging</div>
+        <div class="dom-item"><div class="dom-dot"></div>Security surveillance & campus patrol</div>
+      </div>
+      <div class="pc-tags">
+        <span class="ptag">Python</span><span class="ptag">OOP</span><span class="ptag">Path Planning</span><span class="ptag">Obstacle Avoidance</span><span class="ptag">Logging</span>
+      </div>
+      <a href="#" class="pc-link">View Project →</a>
+    </div>
+    <div class="pc">
+      <div class="pc-badge">Hardware</div>
+      <div class="pc-num">PROJECT 03</div>
+      <div class="pc-title">Quadruped Robot</div>
+      <div class="pc-sub">Full-Stack Hardware Design & Simulation</div>
+      <div class="pc-desc">End-to-end quadruped robot development — from mechanical chassis in SolidWorks (4-leg linkage assembly with joints and pins) to full Arduino circuit simulation in TinkerCAD. Integrated 3× HC-SR04 ultrasonic sensors, servo motors, L293D motor driver, and obstacle avoidance logic.</div>
+      <div class="pc-domain-title">Impact Domains</div>
+      <div class="domain-list">
+        <div class="dom-item"><div class="dom-dot"></div>Legged robot research (SPOT / ANYmal class)</div>
+        <div class="dom-item"><div class="dom-dot"></div>Hazardous & unstructured terrain exploration</div>
+        <div class="dom-item"><div class="dom-dot"></div>Search & rescue autonomous systems</div>
+        <div class="dom-item"><div class="dom-dot"></div>Pharmaceutical & clean-room inspection</div>
+        <div class="dom-item"><div class="dom-dot"></div>Defense & nuclear facility monitoring</div>
+      </div>
+      <div class="pc-tags">
+        <span class="ptag">SolidWorks</span><span class="ptag">TinkerCAD</span><span class="ptag">Arduino</span><span class="ptag">HC-SR04</span><span class="ptag">L293D</span><span class="ptag">Servo</span>
+      </div>
+      <a href="#" class="pc-link">View Project →</a>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="contact-sec">
+  <div class="sec-eyebrow">Contact</div>
+  <h2 class="sec-title">Let's Build Together</h2>
+  <p class="sec-sub">Open to high-impact internships and research collaborations at frontier AI & robotics organizations.</p>
+  <div class="contact-grid">
+    <a href="mailto:ambrishwa05@gmail.com" class="cc">
+      <div class="cc-icon">@</div>
+      <div class="cc-label">Email</div>
+      <div class="cc-value">ambrishwa05@gmail.com</div>
+    </a>
+    <a href="https://www.linkedin.com/in/r-ambrish-b34932317" target="_blank" class="cc">
+      <div class="cc-icon">in</div>
+      <div class="cc-label">LinkedIn</div>
+      <div class="cc-value">R. Ambrish</div>
+    </a>
+  </div>
+  <div class="avail">
+    <span class="dot-live"></span>
+    Available for Internships — 2025
+  </div>
+</section>
+
+<footer>
+  <span>© 2025 R. Ambrish — AI & Robotics Researcher</span>
+  <span class="foot-r">Targeting NVIDIA Research</span>
+</footer>
+
+<script>
+/* ===== BACKGROUND: GPU CIRCUIT + ANIMATED SYSTEM ===== */
+const bgCanvas = document.getElementById('bg-canvas');
+const bgCtx = bgCanvas.getContext('2d');
+let BW, BH, traces=[], pulses=[], nodes2=[];
+
+const G = '#76b900', GD = 'rgba(118,185,0,', GN = 'rgba(57,255,20,';
+
+function bgResize(){
+  BW = bgCanvas.width = window.innerWidth;
+  BH = bgCanvas.height = window.innerHeight;
+  buildCircuit();
+}
+
+function buildCircuit(){
+  traces=[]; nodes2=[]; pulses=[];
+  const cw=60, rh=60;
+  const cols=Math.ceil(BW/cw)+1, rows=Math.ceil(BH/rh)+1;
+  // Grid nodes
+  for(let c=0;c<cols;c++){
+    for(let r=0;r<rows;r++){
+      if(Math.random()<0.38){
+        nodes2.push({
+          x:c*cw, y:r*rh,
+          type: Math.random()<0.07?'chip': Math.random()<0.12?'via':'dot',
+          sz: Math.random()<0.1?3: Math.random()<0.25?2:1.2,
+          ph: Math.random()*Math.PI*2, spd:0.012+Math.random()*0.01
+        });
+      }
+    }
+  }
+  // Traces (horizontal + vertical, GPU PCB style)
+  for(let i=0;i<nodes2.length;i++){
+    for(let j=i+1;j<nodes2.length;j++){
+      const dx=nodes2[j].x-nodes2[i].x, dy=nodes2[j].y-nodes2[i].y;
+      const d=Math.sqrt(dx*dx+dy*dy);
+      if(d>0&&d<90&&(Math.abs(dx)<8||Math.abs(dy)<8)){
+        if(!nodes2[i].links)nodes2[i].links=[];
+        if(nodes2[i].links.length<3)nodes2[i].links.push(j);
+      }
+    }
+  }
+}
+
+function spawnBgPulse(){
+  if(nodes2.length===0||pulses.length>80)return;
+  const si=Math.floor(Math.random()*nodes2.length);
+  if(!nodes2[si].links||!nodes2[si].links.length)return;
+  pulses.push({
+    fi:si, ti:nodes2[si].links[Math.floor(Math.random()*nodes2[si].links.length)],
+    t:0, spd:0.02+Math.random()*0.03
+  });
+}
+
+let bgFrame=0;
+function bgAnimate(){
+  requestAnimationFrame(bgAnimate);
+  bgCtx.clearRect(0,0,BW,BH);
+
+  // Subtle dark gradient overlay
+  const grad=bgCtx.createLinearGradient(0,0,BW,BH);
+  grad.addColorStop(0,'rgba(20,28,20,0.15)');
+  grad.addColorStop(1,'rgba(10,14,10,0.1)');
+  bgCtx.fillStyle=grad;
+  bgCtx.fillRect(0,0,BW,BH);
+
+  // Traces
+  for(let i=0;i<nodes2.length;i++){
+    if(!nodes2[i].links)continue;
+    for(const j of nodes2[i].links){
+      const a=nodes2[i],b=nodes2[j];
+      bgCtx.beginPath();
+      bgCtx.moveTo(a.x,a.y);
+      // Right-angle GPU routing
+      bgCtx.lineTo(b.x,a.y);
+      bgCtx.lineTo(b.x,b.y);
+      bgCtx.strokeStyle=GD+'0.08)';
+      bgCtx.lineWidth=0.8;
+      bgCtx.stroke();
+    }
+  }
+
+  // Nodes
+  bgFrame++;
+  nodes2.forEach(n=>{
+    n.ph+=n.spd;
+    const g=(Math.sin(n.ph)*0.5+0.5);
+    if(n.type==='chip'){
+      bgCtx.strokeStyle=GD+'0.12)';bgCtx.lineWidth=0.5;
+      bgCtx.strokeRect(n.x-8,n.y-5,16,10);
+      bgCtx.beginPath();bgCtx.moveTo(n.x-8,n.y-3);bgCtx.lineTo(n.x-12,n.y-3);bgCtx.stroke();
+      bgCtx.beginPath();bgCtx.moveTo(n.x-8,n.y+3);bgCtx.lineTo(n.x-12,n.y+3);bgCtx.stroke();
+      bgCtx.beginPath();bgCtx.moveTo(n.x+8,n.y-3);bgCtx.lineTo(n.x+12,n.y-3);bgCtx.stroke();
+      bgCtx.beginPath();bgCtx.moveTo(n.x+8,n.y+3);bgCtx.lineTo(n.x+12,n.y+3);bgCtx.stroke();
+    } else if(n.type==='via'){
+      bgCtx.strokeStyle=GD+(0.15+g*0.2)+')';bgCtx.lineWidth=0.5;
+      bgCtx.beginPath();bgCtx.arc(n.x,n.y,4,0,Math.PI*2);bgCtx.stroke();
+      bgCtx.beginPath();bgCtx.arc(n.x,n.y,1.5,0,Math.PI*2);
+      bgCtx.fillStyle=GD+(0.1+g*0.25)+')';bgCtx.fill();
+    }
+    bgCtx.fillStyle=GD+(0.12+g*0.3)+')';
+    bgCtx.shadowColor=G;bgCtx.shadowBlur=g*6;
+    bgCtx.beginPath();bgCtx.arc(n.x,n.y,n.sz,0,Math.PI*2);bgCtx.fill();
+    bgCtx.shadowBlur=0;
+  });
+
+  // Spawn & animate pulses
+  if(bgFrame%6===0)spawnBgPulse();
+  for(let i=pulses.length-1;i>=0;i--){
+    const p=pulses[i];p.t+=p.spd;
+    if(p.t>=1){pulses.splice(i,1);continue;}
+    const a=nodes2[p.fi],b=nodes2[p.ti];
+    const t1=Math.min(p.t*2,1), t2=Math.max(p.t*2-1,0);
+    const mx=b.x, my=a.y;
+    const px=p.t<0.5? a.x+(mx-a.x)*t1 : mx+(b.x-mx)*t2;
+    const py=p.t<0.5? a.y+(my-a.y)*t1 : my+(b.y-my)*t2;
+    const alpha=(1-p.t)*0.85;
+    bgCtx.fillStyle=GD+alpha+')';
+    bgCtx.shadowColor=G;bgCtx.shadowBlur=8;
+    bgCtx.beginPath();bgCtx.arc(px,py,2,0,Math.PI*2);bgCtx.fill();
+    bgCtx.shadowBlur=0;
+  }
+}
+
+/* ===== HERO CANVAS: ISO GPU→ROBOT SYSTEM ===== */
+const rc=document.getElementById('robot-canvas');
+const rctx=rc.getContext('2d');
+let RW,RH;
+
+function rcResize(){
+  RW=rc.width=rc.offsetWidth;
+  RH=rc.height=rc.offsetHeight;
+}
+
+// Isometric helpers
+function iso(x,y,z){
+  return {
+    sx: RW/2 + (x-y)*32,
+    sy: RH/2 - z*28 + (x+y)*18
+  };
+}
+
+let sysPhase=0;
+let robotPos={x:0,y:0,z:0};
+let robotTarget={x:1,y:1};
+let robotLeg=0;
+let robotPath=[];
+let robotTrail=[];
+
+// GPU block positions (isometric)
+const GPU_BLOCKS=[
+  {x:-2,y:-2,label:'GPU CORE',color:GD},
+  {x:1,y:-3,label:'VRAM',color:GD},
+  {x:3,y:0,label:'COMPUTE',color:GD},
+  {x:-3,y:2,label:'TENSOR',color:GD},
+  {x:1,y:2,label:'AI ENGINE',color:GD},
+];
+
+const CONNECTIONS=[
+  [0,1],[1,2],[0,3],[0,4],[2,4],[3,4]
+];
+
+function drawIsoBox(sx,sy,w,h,depth,fillColor,strokeColor){
+  // Top face
+  rctx.beginPath();
+  rctx.moveTo(sx,sy);
+  rctx.lineTo(sx+w*32,sy+w*18);
+  rctx.lineTo(sx+w*32-h*32,sy+w*18+h*18);
+  rctx.lineTo(sx-h*32,sy+h*18);
+  rctx.closePath();
+  rctx.fillStyle=fillColor;rctx.fill();
+  rctx.strokeStyle=strokeColor;rctx.lineWidth=0.8;rctx.stroke();
+
+  // Right face
+  rctx.beginPath();
+  rctx.moveTo(sx+w*32,sy+w*18);
+  rctx.lineTo(sx+w*32,sy+w*18+depth*28);
+  rctx.lineTo(sx+w*32-h*32,sy+w*18+h*18+depth*28);
+  rctx.lineTo(sx+w*32-h*32,sy+w*18+h*18);
+  rctx.closePath();
+  rctx.fillStyle='rgba(0,0,0,0.3)';rctx.fill();
+  rctx.strokeStyle=strokeColor;rctx.stroke();
+
+  // Left face
+  rctx.beginPath();
+  rctx.moveTo(sx,sy);
+  rctx.lineTo(sx,sy+depth*28);
+  rctx.lineTo(sx-h*32,sy+h*18+depth*28);
+  rctx.lineTo(sx-h*32,sy+h*18);
+  rctx.closePath();
+  rctx.fillStyle='rgba(0,0,0,0.4)';rctx.fill();
+  rctx.strokeStyle=strokeColor;rctx.stroke();
+}
+
+function drawIsoRobot(sx,sy,legPhase,scale){
+  const s=scale||1;
+  rctx.save();
+  rctx.translate(sx,sy);
+
+  // Glow ring
+  const grd=rctx.createRadialGradient(0,0,0,0,0,30*s);
+  grd.addColorStop(0,GD+'0.18)');grd.addColorStop(1,'transparent');
+  rctx.fillStyle=grd;
+  rctx.beginPath();rctx.arc(0,0,30*s,0,Math.PI*2);rctx.fill();
+
+  rctx.strokeStyle=G;rctx.lineWidth=1.5*s;
+  rctx.shadowColor=G;rctx.shadowBlur=8;
+
+  // Body (iso box feel)
+  rctx.strokeRect(-10*s,-8*s,20*s,16*s);
+  // Head
+  rctx.strokeRect(-6*s,-20*s,12*s,12*s);
+  // Eyes
+  rctx.fillStyle=G;rctx.shadowBlur=12;
+  rctx.beginPath();rctx.arc(-3*s,-15*s,1.5*s,0,Math.PI*2);rctx.fill();
+  rctx.beginPath();rctx.arc(3*s,-15*s,1.5*s,0,Math.PI*2);rctx.fill();
+  rctx.shadowBlur=4;
+
+  // CPU logo on chest
+  rctx.font=`bold ${5*s}px Space Mono, monospace`;
+  rctx.fillStyle=GD+'0.8)';rctx.textAlign='center';
+  rctx.fillText('AI',0,3*s);
+
+  // 4 Legs
+  const legs=[{ox:-8*s,phase:0},{ox:8*s,phase:Math.PI},{ox:-5*s,phase:Math.PI},{ox:5*s,phase:0}];
+  legs.forEach((l,i)=>{
+    const baseY=i<2?8*s:6*s;
+    const sw=Math.sin(legPhase+l.phase)*6*s;
+    const lft=Math.abs(Math.sin(legPhase+l.phase))*4*s;
+    rctx.beginPath();
+    rctx.moveTo(l.ox,baseY);
+    rctx.lineTo(l.ox+sw*0.3,baseY+8*s);
+    rctx.lineTo(l.ox+sw*0.7,baseY+16*s-lft);
+    rctx.strokeStyle=G;rctx.lineWidth=1.2*s;rctx.stroke();
+    rctx.fillStyle=GD+'0.7)';
+    rctx.beginPath();rctx.arc(l.ox+sw*0.7,baseY+16*s-lft,1.5*s,0,Math.PI*2);rctx.fill();
+  });
+
+  // Antenna
+  rctx.strokeStyle=G;rctx.lineWidth=1*s;rctx.shadowBlur=6;
+  rctx.beginPath();rctx.moveTo(0,-20*s);rctx.lineTo(0,-28*s);rctx.stroke();
+  rctx.fillStyle=G;rctx.shadowBlur=14;
+  rctx.beginPath();rctx.arc(0,-29*s,2*s,0,Math.PI*2);rctx.fill();
+  rctx.shadowBlur=0;
+  rctx.restore();
+}
+
+function drawScene(){
+  rctx.clearRect(0,0,RW,RH);
+  sysPhase+=0.025;
+
+  // Dark iso floor grid
+  for(let gx=-4;gx<=4;gx++){
+    for(let gy=-4;gy<=4;gy++){
+      const p1=iso(gx,gy,0),p2=iso(gx+1,gy,0),p3=iso(gx,gy+1,0);
+      rctx.beginPath();
+      rctx.moveTo(p1.sx,p1.sy);
+      rctx.lineTo(p2.sx,p2.sy);
+      rctx.strokeStyle='rgba(118,185,0,0.06)';rctx.lineWidth=0.5;rctx.stroke();
+      rctx.beginPath();
+      rctx.moveTo(p1.sx,p1.sy);
+      rctx.lineTo(p3.sx,p3.sy);
+      rctx.stroke();
+    }
+  }
+
+  // Connections between GPU blocks with animated pulse
+  CONNECTIONS.forEach(([ai,bi],ci)=>{
+    const a=GPU_BLOCKS[ai],b=GPU_BLOCKS[bi];
+    const pa=iso(a.x,a.y,0.5);
+    const pb=iso(b.x,b.y,0.5);
+    // Trace
+    rctx.beginPath();
+    rctx.moveTo(pa.sx,pa.sy);
+    rctx.lineTo(pb.sx,pb.sy);
+    rctx.strokeStyle=GD+'0.2)';rctx.lineWidth=1;rctx.stroke();
+    // Pulse dot
+    const t=(sysPhase*0.6+ci*0.4)%1;
+    const px=pa.sx+(pb.sx-pa.sx)*t;
+    const py=pa.sy+(pb.sy-pa.sy)*t;
+    rctx.fillStyle=G;rctx.shadowColor=G;rctx.shadowBlur=10;
+    rctx.beginPath();rctx.arc(px,py,2.5,0,Math.PI*2);rctx.fill();
+    rctx.shadowBlur=0;
+  });
+
+  // GPU blocks
+  GPU_BLOCKS.forEach((blk,i)=>{
+    const p=iso(blk.x-0.4,blk.y-0.4,0);
+    const glow=(Math.sin(sysPhase*1.5+i*1.2)*0.5+0.5);
+    const alpha=0.06+glow*0.06;
+    drawIsoBox(p.sx,p.sy,0.8,0.8,0.4,
+      `rgba(118,185,0,${alpha})`,
+      `rgba(118,185,0,${0.25+glow*0.2})`
+    );
+    // Label
+    const lp=iso(blk.x,blk.y,0.6);
+    rctx.fillStyle=`rgba(118,185,0,${0.5+glow*0.4})`;
+    rctx.font='bold 8px Space Mono, monospace';
+    rctx.textAlign='center';
+    rctx.fillText(blk.label,lp.sx,lp.sy);
+
+    // Connection line to robot position
+    const rp=iso(robotPos.x,robotPos.y,robotPos.z);
+    rctx.beginPath();
+    rctx.moveTo(lp.sx,lp.sy);
+    rctx.lineTo(rp.sx,rp.sy);
+    rctx.strokeStyle=GD+(0.04+glow*0.05)+')';
+    rctx.lineWidth=0.5;rctx.stroke();
+  });
+
+  // Robot movement
+  robotLeg+=0.09;
+  const rtargetP=iso(robotTarget.x,robotTarget.y,0);
+  const rcurrP=iso(robotPos.x,robotPos.y,0);
+  const rdx=robotTarget.x-robotPos.x, rdy=robotTarget.y-robotPos.y;
+  const rdist=Math.sqrt(rdx*rdx+rdy*rdy);
+  if(rdist<0.15){
+    const targets=[{x:-2,y:-1},{x:2,y:1},{x:-1,y:2},{x:1,y:-2},{x:0,y:0}];
+    const t=targets[Math.floor(Math.random()*targets.length)];
+    robotTarget={x:t.x,y:t.y};
+  } else {
+    robotPos.x+=rdx/rdist*0.025;
+    robotPos.y+=rdy/rdist*0.025;
+  }
+
+  // Robot trail
+  const cp=iso(robotPos.x,robotPos.y,0);
+  robotTrail.push({sx:cp.sx,sy:cp.sy});
+  if(robotTrail.length>50)robotTrail.shift();
+  for(let i=1;i<robotTrail.length;i++){
+    const ta=i/robotTrail.length;
+    rctx.beginPath();
+    rctx.moveTo(robotTrail[i-1].sx,robotTrail[i-1].sy);
+    rctx.lineTo(robotTrail[i].sx,robotTrail[i].sy);
+    rctx.strokeStyle=GD+(ta*0.35)+')';
+    rctx.lineWidth=1;rctx.stroke();
+  }
+
+  // Shadow under robot
+  const rsp=iso(robotPos.x,robotPos.y,0);
+  const shadowGrad=rctx.createRadialGradient(rsp.sx,rsp.sy,0,rsp.sx,rsp.sy,22);
+  shadowGrad.addColorStop(0,GD+'0.15)');shadowGrad.addColorStop(1,'transparent');
+  rctx.fillStyle=shadowGrad;
+  rctx.beginPath();rctx.ellipse(rsp.sx,rsp.sy,22,10,0,0,Math.PI*2);rctx.fill();
+
+  // Robot
+  const robP=iso(robotPos.x,robotPos.y,0.3);
+  drawIsoRobot(robP.sx,robP.sy,robotLeg,1.0);
+
+  // "NEURAL LINK ACTIVE" label
+  rctx.fillStyle=GD+'0.5)';
+  rctx.font='bold 9px Space Mono, monospace';
+  rctx.textAlign='center';
+  rctx.fillText('◆ NEURAL LINK ACTIVE ◆',RW/2,RH-16);
+}
+
+// Init
+window.addEventListener('resize',()=>{bgResize();rcResize();});
+bgResize();
+rcResize();
+
+function loop(){requestAnimationFrame(loop);drawScene();}
+bgAnimate();
+loop();
+
+// Resize observer for robot canvas
+new ResizeObserver(rcResize).observe(rc);
+</script>
+</body>
+</html>
